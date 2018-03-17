@@ -11,6 +11,7 @@ extern crate serde;
 extern crate serde_derive;
 
 use std::sync::Arc;
+use std::time::{SystemTime, UNIX_EPOCH};
 use mongo_driver::client::{ClientPool,Uri};
 use rocket_contrib::Json;
 use rocket::State;
@@ -21,14 +22,21 @@ mod coala_types;
 
 #[post("/<project>", format = "application/json", data = "<coala>")]
 fn report(state: State<AppState>, project: String, coala: Json<coala_types::Coala>) -> String {
+    let now = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("Time retrieval");
+
     let client = state.client_pool.pop();
     let reports = client.take_collection("coala-collector", "report");
-    let content = bson::to_bson(&coala.results.cli).expect("Failed to encode report");
+    let report = bson::to_bson(&coala.results.cli).expect("Failed to encode report");
+
     let document = doc! {
-        "20180317" => content
+        "created_at" => now.as_secs(),
+        "project" => project,
+        "report" => report,
     };
     reports.insert(&document, None).expect("Failed to insert document");
-    format!("Report, project {} content: \n{:?}", project, coala)
+    format!("Report, content: \n{:?}", coala)
 }
 
 struct AppState {
