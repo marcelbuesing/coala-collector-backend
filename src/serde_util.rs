@@ -1,5 +1,6 @@
 macro_rules! enum_number {
     ($name:ident { $($variant:ident = $value:expr, )* }) => {
+        #[repr(i8)]
         #[derive(Clone, Copy, Debug, Eq, PartialEq)]
         pub enum $name {
             $($variant = $value,)*
@@ -10,7 +11,7 @@ macro_rules! enum_number {
                 where S: ::serde::Serializer
             {
                 // Serialize the enum as a u64.
-                serializer.serialize_u64(*self as u64)
+                serializer.serialize_i8(*self as i8)
             }
         }
 
@@ -33,7 +34,14 @@ macro_rules! enum_number {
                         // Rust does not come with a simple way of converting a
                         // number to an enum, so use a big `match`.
                         match value {
-                            $( $value => Ok($name::$variant), )*
+                            $( $value => {
+                                if value > (std::i8::MAX as u64) {
+                                    Err(E::custom(
+                                        format!("Value exceeds 2^8: {}", value)))
+                                } else {
+                                    Ok($name::$variant)
+                                }
+                            }, )*
                             _ => Err(E::custom(
                                 format!("unknown {} value: {}",
                                 stringify!($name), value))),

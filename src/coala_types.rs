@@ -1,14 +1,15 @@
 use std::fmt;
+use std;
 
 /// list of results
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Coala {
-    results: CoalaCli
+    pub results: CoalaCli
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct CoalaCli {
-    cli: Vec<CoalaResults>
+    pub cli: Vec<Report>
 }
 
 /// position of affected code
@@ -17,9 +18,9 @@ pub struct Position {
     /// the name of the file
     file: String,
     /// line number
-    line: u32,
+    line: i32,
     /// column number
-    column: u32
+    column: i32
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -40,7 +41,7 @@ enum_number!(Severity {
 
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct CoalaResults {
+pub struct Report {
     /// usually the name of the bear
     origin: String,
     /// message to be displayed to the user

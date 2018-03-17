@@ -4,6 +4,8 @@ version = "0.1.0"
 authors = ["marcelbuesing <buesing.marcel@googlemail.com>"]
 
 [dependencies]
+bson = "0.11.1"
+mongo_driver = "0.12.0"
 rocket = "0.3.6"
 rocket_codegen = "0.3.6"
 rocket_contrib = "0.3.6"
