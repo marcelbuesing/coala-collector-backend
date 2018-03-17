@@ -13,7 +13,7 @@ pub struct CoalaCli {
 }
 
 /// position of affected code
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Position {
     /// the name of the file
     file: String,
@@ -23,7 +23,7 @@ pub struct Position {
     column: i32
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct AffectedCode {
     /// the name of the file
     file: String,
@@ -40,7 +40,7 @@ enum_number!(Severity {
 });
 
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Report {
     /// usually the name of the bear
     origin: String,
@@ -49,7 +49,7 @@ pub struct Report {
     /// contains SourceRange objects
     affected_code: Vec<AffectedCode>,
     /// severity of the result
-    severity: Severity,
+    severity: i32, //Severity,
     /// message to be shown in DEBUG log
     debug_msg: String,
     /// additional info to be displayed
